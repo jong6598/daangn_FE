@@ -18,7 +18,7 @@ const Login = () => {
       username: formData.username,  
       password: formData.password, 
     };
-
+    
     try{
       const res = await instance.post("/api/login",data)
       localStorage.setItem("TOKEN", res.headers)
@@ -64,7 +64,7 @@ const Login = () => {
         <LoginBtn type="submit" form="login-form" disabled={!isValid}>
           로그인하기
         </LoginBtn>
-        <JoinBtn onClick={() => navigate("/join")}> 회원가입</JoinBtn>
+        <JoinBtn onClick={() => navigate("/")}>취소</JoinBtn>
         </BtnContainer>
       </FormContainer>
   )
@@ -115,7 +115,7 @@ const InputBox = styled.div`
   }
 `;
 
-const LoginBtn = styled.div`
+const LoginBtn = styled.button`
   cursor: pointer;
   padding: 0.7rem 1rem;
   font-size: 1.3rem;
@@ -125,9 +125,13 @@ const LoginBtn = styled.div`
   border: 0;
   border-radius: 0.7rem;
   margin: 0 0.5rem ;
+  &:disabled {
+    background: #e5e5e5;
+    cursor: default;
+  }
 `;
 
-const JoinBtn = styled.div`
+const JoinBtn = styled.button`
   cursor: pointer;
   padding: 0.7rem 1.5rem;
   font-size: 1.3rem;

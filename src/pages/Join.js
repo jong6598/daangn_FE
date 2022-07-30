@@ -20,103 +20,102 @@ const Join = () => {
       password: formData.password,
       confirmPassword: formData.confirmPassword,
     };
-
-    try {
-      const res = await instance.post("/api/signup", data);
-      console.log(res);
-      alert("회원가입 완료! 로그인 페이지로 이동합니다.");
-      navigate("/login");
-    } catch (err) {
-      console.log(err);
-      alert("회원가입에 문제가 발생했습니다.");
-    }
+    console.log(data);
+    // try {
+    //   // const res = await instance.post("/api/signup", data);
+    //   // console.log(res);
+    //   alert("회원가입 완료! 로그인 페이지로 이동합니다.");
+    //   // navigate("/login");
+    // } catch (err) {
+    //   console.log(err);
+    //   alert("회원가입에 문제가 발생했습니다.");
+    // }
   };
 
   return (
-    <FormContainer id="signup-form" onSubmit={handleSubmit(onSubmitJoin)}>
-      <img src="/image/logo.png" alt="logo" />
-      <h2>회원가입</h2>
-      <InputBox>
-        <label>ID</label>
-        <input
-          type="text"
-          placeholder="아이디를 입력해 주세요 (4자 이상)"
-          autoComplete="off"
-          {...register("username", {
-            required: true,
-            minLength: 4,
-          })}
-        />
-        {errors.username && errors.username.type === "required" && (
-          <Error>* 필수 입력 값입니다.</Error>
-        )}
-        {errors.username && errors.username.type === "minLength" && (
-          <Error>* 아이디는 4자 이상입니다</Error>
-        )}
-      </InputBox>
-      <InputBox>
-        <label>NICKNAME</label>
-        <input
-          type="text"
-          placeholder="닉네임을 입력해 주세요 (10자 이하)"
-          autoComplete="off"
-          {...register("nickname", {
-            required: true,
-            maxLength: 10,
-          })}
-        />
-        {errors.nickname && errors.nickname.type === "required" && (
-          <Error>* 필수 입력 값입니다.</Error>
-        )}
-        {errors.nickname && errors.nickname.type === "maxLength" && (
-          <Error>* 닉네임은 10자 이하입니다</Error>
-        )}
-      </InputBox>
-      <InputBox>
-        <label>PASSWORD</label>
-        <input
-          type="password"
-          placeholder="비밀번호를 입력해 주세요 (6자 이상)"
-          autoComplete="off"
-          {...register("password", {
-            required: true,
-            minLength: 6,
-          })}
-        />
-        {errors.password && errors.password.type === "required" && (
-          <Error>* 필수 입력 값입니다.</Error>
-        )}
-        {errors.password && errors.password.type === "minLength" && (
-          <Error>* 비밀번호는 6자 이상입니다</Error>
-        )}
-      </InputBox>
-      <InputBox>
-        <label>PASSWORD CONFIRMATION</label>
-        <input
-          type="password"
-          placeholder="비밀번호를 입력해 주세요 (6자 이상)"
-          autoComplete="off"
-          {...register("confirmPassword", {
-            required: true,
-            validate: {
-              matchesPreviousPassword: (value) =>
-                getValues("password") === value ||
-                "* 비밀번호가 일치하지 않습니다.",
-            },
-          })}
-        />
-        {errors.confirmPassword && (
-          <Error>{errors.confirmPassword.message}</Error>
-        )}
-      </InputBox>
-      <BtnContainer>
-        <JoinBtn type="submit" form="signup-form" disabled={!isValid}>
-          가입하기
-        </JoinBtn>
-        <CancleBtn onClick={() => navigate("/")}> 취소 </CancleBtn>
-      </BtnContainer>
-      
-    </FormContainer>
+      <FormContainer id="signup-form" onSubmit={handleSubmit(onSubmitJoin)}>
+        <img src="/image/logo.png" alt="logo" />
+        <h2>회원가입</h2>
+        <InputBox>
+          <label>ID</label>
+          <input
+            type="text"
+            placeholder="아이디를 입력해 주세요 (4자 이상)"
+            autoComplete="off"
+            {...register("username", {
+              required: true,
+              minLength: 4,
+            })}
+          />
+          {errors.username && errors.username.type === "required" && (
+            <Error>* 필수 입력 값입니다.</Error>
+          )}
+          {errors.username && errors.username.type === "minLength" && (
+            <Error>* 아이디는 4자 이상입니다</Error>
+          )}
+        </InputBox>
+        <InputBox>
+          <label>NICKNAME</label>
+          <input
+            type="text"
+            placeholder="닉네임을 입력해 주세요 (10자 이하)"
+            autoComplete="off"
+            {...register("nickname", {
+              required: true,
+              maxLength: 10,
+            })}
+          />
+          {errors.nickname && errors.nickname.type === "required" && (
+            <Error>* 필수 입력 값입니다.</Error>
+          )}
+          {errors.nickname && errors.nickname.type === "maxLength" && (
+            <Error>* 닉네임은 10자 이하입니다</Error>
+          )}
+        </InputBox>
+        <InputBox>
+          <label>PASSWORD</label>
+          <input
+            type="password"
+            placeholder="비밀번호를 입력해 주세요 (6자 이상)"
+            autoComplete="off"
+            {...register("password", {
+              required: true,
+              minLength: 6,
+            })}
+          />
+          {errors.password && errors.password.type === "required" && (
+            <Error>* 필수 입력 값입니다.</Error>
+          )}
+          {errors.password && errors.password.type === "minLength" && (
+            <Error>* 비밀번호는 6자 이상입니다</Error>
+          )}
+        </InputBox>
+        <InputBox>
+          <label>PASSWORD CONFIRMATION</label>
+          <input
+            type="password"
+            placeholder="비밀번호를 입력해 주세요 (6자 이상)"
+            autoComplete="off"
+            {...register("confirmPassword", {
+              required: true,
+              validate: {
+                matchesPreviousPassword: (value) =>
+                  getValues("password") === value ||
+                  "* 비밀번호가 일치하지 않습니다.",
+              },
+            })}
+          />
+          {errors.confirmPassword && (
+            <Error>{errors.confirmPassword.message}</Error>
+          )}
+        </InputBox>
+        <BtnContainer>
+          <JoinBtn type="submit" form="signup-form" disabled={!isValid}>
+            가입하기
+          </JoinBtn>
+          <CancleBtn onClick={() => navigate("/")}> 취소 </CancleBtn>
+        </BtnContainer>
+      </FormContainer>
   );
 };
 
@@ -173,18 +172,22 @@ const Error = styled.p`
 
 const BtnContainer = styled.div`
   display: flex;
-`
+`;
 
-const JoinBtn = styled.div`
+const JoinBtn = styled.button`
   cursor: pointer;
   padding: 0.7rem 1rem;
   font-size: 1.3rem;
   color: white;
-  background-color: #e78111;
+  background: #e78111;
   outline: 0;
   border: 0;
   border-radius: 0.7rem;
-  margin: 0 0.5rem ;
+  margin: 0 0.5rem;
+  &:disabled {
+    background: #e5e5e5;
+    cursor: default;
+  }
 `;
 
 const CancleBtn = styled.div`
@@ -196,5 +199,5 @@ const CancleBtn = styled.div`
   outline: 0;
   border: 0;
   border-radius: 0.7rem;
-  margin: 0 0.5rem ;
+  margin: 0 0.5rem;
 `;
