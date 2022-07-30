@@ -1,19 +1,40 @@
 {
+  "user": [
+      {
+          "username": "test",
+          "nickname": "testnickname",
+          "password": "123123",
+          "confirmPassword": "123123"
+      }
+  ],
   "posts": [
-    {
-      "id": 1,
-      "title": "json-server",
-      "author": "typicode"
+      {
+          "title": "테스트데이터",
+          "category": "DIGITAL",
+          "price": 100,
+          "Area": "JUNGGU",
+          "content": "이 아이패드로 말할거 같으면 영국에서 시작되어 중국으로 넘어가서 아주아주 좋은 미국산소고기",
+          "imageUrl": "http://tech.kakao.com/wp-content/uploads/2022/06/01.png",
+          "state": "SALE",
+          "userId": "1",
+          "id": "1",
+          "nickname": "불막창",
+          "after": 2,
+          "likeCount": 3
+      },
+      {
+        "title": "질소 팔아요",
+        "category": "GROCERIES",
+        "price": 3000000,
+        "Area": "DALSEOGU",
+        "content": "제곧내",
+        "imageUrl": "http://th2.tmon.kr/thumbs/image/3e8/194/430/22494861b_700x700_95_FIT.jpg",
+        "state": "SALE",
+        "userId": "1",
+        "id": "2",
+        "nickname": "오리온",
+        "after": "방금 전",
+        "likeCount": 0
     }
-  ],
-  "comments": [
-    {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
-    }
-  ],
-  "profile": {
-    "name": "typicode"
-  }
+  ]
 }
