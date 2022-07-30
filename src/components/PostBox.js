@@ -63,10 +63,22 @@ const PostInfoBox = styled.div`
 `;
 
 const ImageBox = styled.div`
+  width: 10rem;
   height: 8rem;
+  position:relative;
+  background: #ffecd7;
   img {
+    position: absolute;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
     border-radius: 5px;
-    max-height: 8rem;
   }
 `;
 
