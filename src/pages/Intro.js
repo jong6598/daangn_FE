@@ -56,6 +56,7 @@ const LoginBox = styled.div`
   display:flex;
   flex-direction:row;
   justify-content: center;
+  margin-top: 1rem;
   button {
     margin-left: 0.5rem;
     background-color: white;

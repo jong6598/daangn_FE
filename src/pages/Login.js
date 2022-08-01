@@ -20,9 +20,14 @@ const Login = () => {
     };
     
     try{
-      const res = await instance.post("/api/login",data)
-      localStorage.setItem("TOKEN", res.headers)
-      localStorage.setItem("user", res.data.userinfo)
+      const res = await instance.post("/api/login", data, {
+        withCredentials: true,
+      });
+      console.log(res);
+      localStorage.setItem("TOKEN", res.data.token);
+      localStorage.setItem("userId", res.data.userId);
+      localStorage.setItem("username", res.data.username);
+      localStorage.setItem("nickname", res.data.nickname);
       alert('로그인 성공');
       navigate('/home');
     } catch(err){
@@ -56,7 +61,7 @@ const Login = () => {
           autoComplete="off"
           {...register("password", {
             required: true,
-            minLength: 6,
+            // minLength: 6,
           })}
         />
         </InputBox>

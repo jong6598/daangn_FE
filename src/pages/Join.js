@@ -21,15 +21,16 @@ const Join = () => {
       confirmPassword: formData.confirmPassword,
     };
     console.log(data);
-    // try {
-    //   // const res = await instance.post("/api/signup", data);
-    //   // console.log(res);
-    //   alert("회원가입 완료! 로그인 페이지로 이동합니다.");
-    //   // navigate("/login");
-    // } catch (err) {
-    //   console.log(err);
-    //   alert("회원가입에 문제가 발생했습니다.");
-    // }
+    try {
+      const res = await instance.post("/api/signup", data);
+      // const res = await instance.post("/user", data);
+      console.log(res);
+      alert("회원가입 완료! 로그인 페이지로 이동합니다.");
+      navigate("/login");
+    } catch (err) {
+      console.log(err);
+      alert("회원가입에 문제가 발생했습니다.");
+    }
   };
 
   return (
