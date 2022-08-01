@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FaCarrot } from "react-icons/fa";
 import { IoIosPaper } from "react-icons/io";
 import { AiFillHeart } from "react-icons/ai";
@@ -9,35 +9,62 @@ import Footer from "../components/Footer";
 import PostBox from "../components/PostBox";
 
 import instance from "../axiosConfig";
+import { useNavigate } from "react-router-dom";
 
 const Mypage = () => {
-  //FIXME: 로그인한 계정의 포스트 들고오는 로직으로 바꾸기
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [filter, setFilter] = useState('sale');
+  const nickname = localStorage.getItem('nickname');
+
   const getPosts = async () => {
-    const res = await instance.get("/posts");
+    const res = await instance.get(`/api/mypost?filter=${filter}&page=0&size=4`);
+    console.log(res);
     return res.data;
   };
+  console.log(`/api/mypost?filter=${filter}&page=0&size=4`);
 
   const posts = useQuery(["my_post_list"], getPosts, {
     refetchOnWindowFocus: false,
-  }).data;
+  }).data.list.content;
+  
+  useEffect(() => {
+    queryClient.invalidateQueries('my_post_list');
+  }, [filter])
+
+  const handleLogout = async () => {
+    await instance.post("/api/logout");
+    localStorage.clear();
+    alert("로그아웃 되었습니다.");
+    navigate("/");
+  };
+
+  const onClickFilter = (filter) => {
+    setFilter(filter);
+  }
 
   return (
     <MainDiv>
       <HeadBox>
         <p>나의 당근</p>
+        <button onClick={handleLogout}>로그아웃</button>
       </HeadBox>
       <ProfileBox>
         <FaCarrot />
         <NicknameBox>
-          <p>닉네임</p>
+          <p>{nickname}</p>
         </NicknameBox>
       </ProfileBox>
       <SellAndLikeList>
-        <div>
+        <div onClick={() => {
+          onClickFilter('sale');
+        }}>
           <IoIosPaper />
           <p>판매내역</p>
         </div>
-        <div>
+        <div onClick={() => {
+          onClickFilter('interest');
+        }}>
           <AiFillHeart />
           <p>관심목록</p>
         </div>
@@ -62,11 +89,20 @@ const HeadBox = styled.div`
   text-align: left;
   padding: 1rem;
   background: #ffecd7;
+  display: flex;
+  align-items:center;
+  justify-content: space-between;
   border-bottom: 1px solid #f1f1f1;
   p {
     font-size: 1rem;
     font-weight: 700;
     margin: 0;
+  }
+  button {
+    margin-right: 0.5rem;
+    border: none;
+    padding: 0.5rem;
+    background: #fffbf7;
   }
 `;
 
