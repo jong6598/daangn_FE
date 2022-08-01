@@ -1,21 +1,22 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { BiSearchAlt2 } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
 import instance from "../axiosConfig";
 
 const Header = () => {
+  const navigate = useNavigate();
   const handleLogout = async () => {
-    const res = await instance.post('/api/logout');
-    console.log('로그아웃', res);
-    
-  }
+    await instance.post("/api/logout");
+    localStorage.clear();
+    alert("로그아웃 되었습니다.");
+    navigate("/");
+  };
 
   return (
     <HeaderComponent>
       <Areabar>
-        
         <select>
+          <option value="ALL">대구시 전체</option>
           <option value="NAMGU">남구</option>
           <option value="DALSEOGU">달서구</option>
           <option value="DALSEONGGUN">달성군</option>
@@ -27,11 +28,8 @@ const Header = () => {
         </select>
       </Areabar>
       <Navbar>
-        <InputBox>
-          <input type="text" />
-          <BiSearchAlt2 />
-        </InputBox>
         <select>
+          <option value="ALL">전체 카테고리</option>
           <option value="DIGITAL">디지털기기</option>
           <option value="APPLIANCES">생활가전</option>
           <option value="HOUSEHOLD">가구/인테리어</option>
@@ -46,6 +44,7 @@ const Header = () => {
           <option value="PLANT">식물</option>
           <option value="ETC">기타</option>
         </select>
+        <input></input>
         <button onClick={handleLogout}>로그아웃</button>
       </Navbar>
     </HeaderComponent>
@@ -69,7 +68,15 @@ const HeaderComponent = styled.header`
     height: 3rem;
   }
   select {
-    width: 5rem;
+    cursor: pointer;
+    border-radius: 5px;
+    background: #fffbf7;
+    width: 10rem;
+    border: none;
+    padding: 1rem;
+    &:hover {
+    background: #f6f6f6;
+  }
   }
 `;
 
@@ -80,6 +87,16 @@ const Areabar = styled.div`
 
 const Navbar = styled.div`
   display: flex;
+  gap: 1rem;
+  button {
+    background: #fffbf7;
+    border: none;
+    padding: 1rem;
+    border-radius: 5px;
+    &:hover {
+      background: #f6f6f6;
+    }
+  }
 `;
 
 const InputBox = styled.div`
