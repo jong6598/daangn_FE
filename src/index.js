@@ -4,8 +4,10 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+
+import store from "./redux/store";
 import Spinner from "./components/Spinner";
 
 const quertClient = new QueryClient({
@@ -19,11 +21,13 @@ const quertClient = new QueryClient({
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Suspense fallback={<Spinner />}>
+    <Provider store={store}>
     <QueryClientProvider client={quertClient}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </QueryClientProvider>
+    </Provider>
   </Suspense>
 );
 
