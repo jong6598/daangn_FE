@@ -1,69 +1,91 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import instance from "../axiosConfig";
 import styled from "styled-components";
-import { useQuery } from "@tanstack/react-query";
-import { AiOutlineHome} from "react-icons/ai";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { AiOutlineHome } from "react-icons/ai";
+import Footer from "../components/Footer";
 
 const PostDetail = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const storuser = JSON.parse(localStorage.getItem("user"));
+  const storetoken = localStorage.getItem("TOKEN");
+  const nickname = localStorage.getItem("nickname");
+  const [liked, setLiked] = useState();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.invalidateQueries("post");
+  }, [liked])
 
   const getPost = async () => {
-    const res = await instance.get(`/posts/${params.postId}`);
+    const res = await instance.get(`/api/post/${params.postId}`);
     console.log(res.data);
     return res.data;
   };
 
   const postInfo = useQuery(["post"], getPost, {
     refetchOnWindowFocus: false,
-  }).data;
+  }).data.post;
 
   console.log(postInfo);
 
-  const contentDeleteBtn = async () => {
-    if (storuser !== null) {
+  const toggleLike = async () => {
+    if (postInfo.isLiked===false) {
+      try{
+        await instance.post(`/api/like/${params.postId}`)
+        console.log(postInfo.isLiked) 
+        setLiked(true)
+      } catch(err){
+        console.log(err);
+      }
+    } else if 
+    (postInfo.isLiked===true){
       try {
-        // await instance.delete(`/api/post/${params.postId}`);
-        await instance.delete(`/posts/${params.postId}`);
-        return navigate("/home");
-      } catch (err) {
+        await instance.delete(`/api/like/${params.postId}`)
+        console.log(postInfo.isLiked)
+        setLiked(false)
+      } catch(err){
         console.log(err);
         alert(err);
       }
-    } else {
-      alert("err");
-      return navigate("/login");
+    }
+  }
+
+
+  const contentDeleteBtn = async () => {
+    const result = window.confirm("게시글을 삭제하시겠습니까?");
+    if (result) {
+      if (storetoken !== null) {
+        try {
+          await instance.delete(`/api/post/${params.postId}`);
+          return navigate("/home");
+        } catch (err) {
+          console.log(err);
+          alert(err);
+        }
+      } else {
+        alert("err");
+        return navigate("/login");
+      }
     }
   };
 
-  // const contentUpdateBtn = () =>{
-  //   if (storuser !== null ) {
-  //       // await instance.put(`api/post/${params.postId}`)
-  //       // try{await instance.put(`api/post/${params.postId}`)
-  //       return  navigate(`/postedit`)
-  //   } else {
-  //   alert("로그인을 해주세요");
-  //   return navigate("/login");
-  //   }
-  // };
-
   return (
     <MainDiv>
-      
       <HomeBtn onClick={() => navigate("/home")}>
         <AiOutlineHome />
       </HomeBtn>
-      
-      <Ubtn onClick={() => navigate("/postedit")}>수정</Ubtn>
-      <Dbtn onClick={contentDeleteBtn}>삭제</Dbtn>
+      {postInfo.nickname === nickname ? (
+        <>
+          <Ubtn onClick={() => navigate("/post")}>수정</Ubtn>
+          <Dbtn onClick={contentDeleteBtn}>삭제</Dbtn>
+        </>
+      ) : null}
       <img src={postInfo.imageUrl} alt="" />
       <Userbox>
-        {/* ,작성자 이름, district */}
-        {/* <img src="/image/logo.png" alt="logo" /> */}
         <span>작성자:{postInfo.nickname}</span>
-        <span>위치:{postInfo.Area}</span>
+        <span>위치:{postInfo.area}</span>
       </Userbox>
       <Postbox>
         <span>{postInfo.title}</span>
@@ -72,8 +94,8 @@ const PostDetail = () => {
         <span>{postInfo.price}</span>
         <span>{postInfo.content}</span>
       </Postbox>
-      <button>하트</button>
-      푸터 넣기!!!
+      <HeartBtn onClick={toggleLike}> {postInfo.isLiked===true?(<img src="/image/heart.png" alt="heartlogo"/>):(<img src="/image/emptyheart.png" alt="emptyheartlogo"/>)} </HeartBtn>
+      <Footer />
     </MainDiv>
   );
 };
@@ -85,22 +107,22 @@ const MainDiv = styled.div`
   height: 100vh;
   margin: 0 auto;
   justify-content: center;
-  background-color: violet;
+  background: #fffbf7;
 
   img {
     display: block;
     margin: 1.3rem auto 0;
     width: 100%;
-    max-width: 30rem;
+    max-width: 25rem;
   }
 `;
 
 const HomeBtn = styled.button`
-    font-size: 3rem;
-    margin-left: -9rem;
-    margin-top: 1rem;
-    background-color: transparent;
-    border:0;
+  font-size: 3rem;
+  margin-left: -25rem;
+  margin-top: 1rem;
+  background-color: transparent;
+  border: 0;
 `;
 
 const Ubtn = styled.button`
@@ -113,13 +135,13 @@ const Dbtn = styled.button`
   display: flex;
   float: right;
   font-size: 2rem;
-  margin-top: 1rem ;
+  margin-top: 1rem;
   margin-left: 2rem;
 `;
 
 const Userbox = styled.div`
-  background-color: purple;
-  height: 13%;
+  background: #ffecd7;
+  height: 10%;
   display: flex;
   flex-direction: column;
   margin: 1.3rem auto 0;
@@ -132,10 +154,17 @@ const Userbox = styled.div`
   }
 `;
 const Postbox = styled.div`
-  background-color: purple;
+  background: #ffecd7;
   display: flex;
   flex-direction: column;
   margin: 1.3rem auto 0;
   max-width: 30rem;
   text-align: center;
 `;
+
+const HeartBtn = styled.button`
+  max-width:3rem;
+  border: 0;
+  background-color: transparent;
+  max-height: 6rem;
+`
