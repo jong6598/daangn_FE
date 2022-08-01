@@ -1,13 +1,16 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 import { AiOutlineHeart } from "react-icons/ai";
 
 const PostBox = ({ posts }) => {
+  const postArea = useSelector((state) => state.area);
   const navigate = useNavigate();
   return (
     <>
-      {posts.map((data) => {
+      {posts && posts.map((data) => {
         return (
           <PostContainer
             key={data.id}
@@ -25,7 +28,7 @@ const PostBox = ({ posts }) => {
               <PostInfo>
                 <h2>{data.title}</h2>
                 <h3>
-                  {data.Area} · {data.after}일 전
+                  {postArea[data.area]} · {data.after}
                 </h3>
                 <h1>{data.price}원</h1>
               </PostInfo>
@@ -65,7 +68,7 @@ const PostInfoBox = styled.div`
 const ImageBox = styled.div`
   width: 10rem;
   height: 8rem;
-  position:relative;
+  position: relative;
   background: #ffecd7;
   img {
     position: absolute;
