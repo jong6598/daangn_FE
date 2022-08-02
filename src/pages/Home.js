@@ -1,10 +1,12 @@
-import React, { useEffect, useState, uesRef, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import instance from "../axiosConfig";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import { BiSearch } from "react-icons/bi";
+import { FiPlusCircle } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 import Spinner from "../components/Spinner";
 import Footer from "../components/Footer";
@@ -19,24 +21,32 @@ const Home = () => {
   const queryClient = useQueryClient();
   const [areaSelected, setAreaSelected] = useState("ALL");
   const [categorySelected, setCategorySelected] = useState("ALL");
+  const [search, setSearch] = useState(null);
 
   const getPosts = async (pageParam = 0) => {
-    const res = await instance.get(
-      `/api/posts?category=${categorySelected}&area=${areaSelected}&page=${pageParam}&size=6`
-    );
-    console.log(res);
-    const data = res.data.list.content;
-    const last = res.data.list.last;
-    console.log(data, last);
-    return { data, last, nextPage: pageParam + 1 };
+    if (search) {
+      const res = await instance.get(
+        `/api/posts/search?keyword=${search}&page=${pageParam}&size=6`
+      );
+      const data = res.data.list.content;
+      const last = res.data.list.last;
+      return { data, nextPage: pageParam + 1, last };
+    } else {
+      const res = await instance.get(
+        `/api/posts?category=${categorySelected}&area=${areaSelected}&page=${pageParam}&size=6`
+      );
+      const data = res.data.list.content;
+      const last = res.data.list.last;
+      return { data, nextPage: pageParam + 1, last };
+    }
   };
 
   const { data, fetchNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
     ["postList"],
     ({ pageParam = 0 }) => getPosts(pageParam),
     {
-      getNextPageParam: (LastPage) =>
-        !LastPage.last ? LastPage.nextPage : undefined,
+      getNextPageParam: (lastPage) =>
+        !lastPage.last ? lastPage.nextPage : undefined,
     }
   );
 
@@ -44,12 +54,16 @@ const Home = () => {
     if (inView) {
       fetchNextPage();
     }
-  }, [inView, fetchNextPage]);
+  }, [inView]);
 
   useEffect(() => {
     refetch();
-    queryClient.invalidateQueries("postList");
-  }, [refetch, queryClient, areaSelected, categorySelected]);
+  }, [search]);
+
+  useEffect(() => {
+    refetch();
+    setSearch(null);
+  }, [areaSelected, categorySelected])
 
   const handleArea = () => {
     setAreaSelected(area_ref.current.value);
@@ -59,17 +73,13 @@ const Home = () => {
     setCategorySelected(category_ref.current.value);
   };
 
-  // const onClicksearch = async (pageParam = 0) => {
-  //   let keyword = search_ref.current.value;
-  //   const res = await instance.get(
-  //     `/api/posts/search?keyword=${keyword}&page=${pageParam}&size=6`
-  //   );
-  // };
-
+  const onClicksearch = () => {
+    setSearch(search_ref.current.value);
+    search_ref.current.value = '';
+  };
   return (
     <>
       <MainDiv>
-        {/* <Header /> */}
         <HeaderComponent>
           <FilterBox>
             <Areabar>
@@ -108,18 +118,35 @@ const Home = () => {
             <input ref={search_ref}></input>
             <BiSearch
               onClick={() => {
-                // onClicksearch();
+                onClicksearch();
               }}
             />
           </InputWrap>
         </HeaderComponent>
-        <PostBox posts={data.pages[0].data} />
+        {data &&
+          data.pages.map((page, idx) => {
+            return (
+              <React.Fragment key={idx}>
+                {page.data.map((post) => (
+                  <PostContainer
+                    key={post.id}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      navigate(`/post/${post.id}`);
+                    }}
+                  >
+                    <PostBox data={post} />
+                  </PostContainer>
+                ))}
+              </React.Fragment>
+            );
+          })}
         {isFetchingNextPage ? <Spinner /> : <div ref={ref} />}
-        {/* <Link to="/post">
+        <Link to="/post">
           <PostBtn>
             <FiPlusCircle />
           </PostBtn>
-        </Link> */}
+        </Link>
         <Footer />
       </MainDiv>
     </>
@@ -210,11 +237,22 @@ const InputWrap = styled.div`
   }
 `;
 
+const PostContainer = styled.div`
+  margin: 0 auto;
+  width: calc(100% - 6rem);
+  height: 12rem;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f1f1;
+`;
+
 const PostBtn = styled.div`
   cursor: pointer;
-  position: absolute;
-  bottom: 7%;
-  right: 5%;
+  position: fixed;
+  bottom: 20%;
+  right: 30%;
   border-radius: 5rem;
   svg {
     width: 6rem;
@@ -225,3 +263,4 @@ const PostBtn = styled.div`
     background: #fffbf7;
   }
 `;
+
