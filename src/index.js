@@ -22,11 +22,11 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Suspense fallback={<Spinner />}>
     <Provider store={store}>
-    <QueryClientProvider client={quertClient}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </QueryClientProvider>
+      <QueryClientProvider client={quertClient}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </QueryClientProvider>
     </Provider>
   </Suspense>
 );
