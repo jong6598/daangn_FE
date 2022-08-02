@@ -5,45 +5,30 @@ import { useSelector } from "react-redux";
 
 import { AiOutlineHeart } from "react-icons/ai";
 
-const PostBox = ({ posts }) => {
+const PostBox = ({ data }) => {
   const postArea = useSelector((state) => state.area);
-  const navigate = useNavigate();
   return (
     <>
-      {posts && posts.map((data) => {
-        return (
-          <PostContainer
-            key={data.id}
-            style={{
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              navigate(`/post/${data.id}`);
-            }}
-          >
-            <PostInfoBox>
-              <ImageBox>
-                <img src={data.imageUrl} alt="postimage" />
-              </ImageBox>
-              <PostInfo>
-                <h2>{data.title}</h2>
-                <h3>
-                  {postArea[data.area]} · {data.after}
-                </h3>
-                <h1>{data.price}원</h1>
-              </PostInfo>
-            </PostInfoBox>
-            <LikeCountBox>
-              {data.likeCount > 0 ? (
-                <>
-                  <AiOutlineHeart />
-                  <p>{data.likeCount}</p>
-                </>
-              ) : null}
-            </LikeCountBox>
-          </PostContainer>
-        );
-      })}
+      <PostInfoBox>
+        <ImageBox>
+          <img src={data.imageUrl} alt="postimage" />
+        </ImageBox>
+        <PostInfo>
+          <h2>{data.title}</h2>
+          <h3>
+            {postArea[data.area]} · {data.after}
+          </h3>
+          <h1>{data.price}원</h1>
+        </PostInfo>
+      </PostInfoBox>
+      <LikeCountBox>
+        {data.likeCount > 0 ? (
+          <>
+            <AiOutlineHeart />
+            <p>{data.likeCount}</p>
+          </>
+        ) : null}
+      </LikeCountBox>
     </>
   );
 };
