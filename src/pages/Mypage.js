@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+// TODO:intersection-observer 사용해보기
+import { useInView } from "react-intersection-observer";
 import { FaCarrot } from "react-icons/fa";
 import { IoIosPaper } from "react-icons/io";
 import { AiFillHeart } from "react-icons/ai";
 
+import Spinner from "../components/Spinner";
 import Footer from "../components/Footer";
 import PostBox from "../components/PostBox";
 
@@ -14,23 +17,27 @@ import { useNavigate } from "react-router-dom";
 const Mypage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [filter, setFilter] = useState('sale');
-  const nickname = localStorage.getItem('nickname');
+  const { ref, inView } = useInView();
+  const [filter, setFilter] = useState("sale");
+  const nickname = localStorage.getItem("nickname");
 
-  const getPosts = async () => {
-    const res = await instance.get(`/api/mypost?filter=${filter}&page=0&size=4`);
-    console.log(res);
-    return res.data;
+  const getPosts = async (pageParam = 0) => {
+    const res = await instance.get(
+      `/api/mypost?filter=${filter}&page=${pageParam}&size=6`
+    );
+    let data = res.data.list.content;
+    let last = res.data.list.last;
+    return { data, last, nextPage: pageParam + 1 };
   };
-  console.log(`/api/mypost?filter=${filter}&page=0&size=4`);
 
-  const posts = useQuery(["my_post_list"], getPosts, {
-    refetchOnWindowFocus: false,
-  }).data.list.content;
-  
-  useEffect(() => {
-    queryClient.invalidateQueries('my_post_list');
-  }, [filter])
+  const { data, fetchNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
+    ["myPostList"],
+    ({ pageParam = 0 }) => getPosts(pageParam),
+    {
+      getNextPageParam: (LastPage) =>
+        !LastPage.last ? LastPage.nextPage : undefined,
+    }
+  );
 
   const handleLogout = async () => {
     await instance.post("/api/logout");
@@ -39,9 +46,19 @@ const Mypage = () => {
     navigate("/");
   };
 
-  const onClickFilter = (filter) => {
-    setFilter(filter);
-  }
+  useEffect(() => {
+    refetch();
+  }, [filter]);
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [inView]);
+
+  const onClickFilter = (data) => {
+    setFilter(data);
+  };
 
   return (
     <MainDiv>
@@ -56,21 +73,43 @@ const Mypage = () => {
         </NicknameBox>
       </ProfileBox>
       <SellAndLikeList>
-        <div onClick={() => {
-          onClickFilter('sale');
-        }}>
+        <div
+          onClick={() => {
+            onClickFilter("sale");
+          }}
+        >
           <IoIosPaper />
           <p>판매내역</p>
         </div>
-        <div onClick={() => {
-          onClickFilter('interest');
-        }}>
+        <div
+          onClick={() => {
+            onClickFilter("interest");
+          }}
+        >
           <AiFillHeart />
           <p>관심목록</p>
         </div>
       </SellAndLikeList>
-      <PostBox  posts={posts}/>
+      {data &&
+        data.pages.map((page, idx) => {
+          return (
+            <React.Fragment key={idx}>
+              {page.data.map((post) => (
+                <PostContainer
+                  key={post.id}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    navigate(`/post/${post.id}`);
+                  }}
+                >
+                  <PostBox data={post} />
+                </PostContainer>
+              ))}
+            </React.Fragment>
+          );
+        })}
       <Footer theme={"mypage"} />
+      {isFetchingNextPage ? <Spinner /> : <div ref={ref} />}
     </MainDiv>
   );
 };
@@ -83,6 +122,7 @@ const MainDiv = styled.div`
   height: calc(100vh - 7rem);
   margin: 0rem auto 7rem;
   justify-content: center;
+  overflow-y: auto;
 `;
 
 const HeadBox = styled.div`
@@ -90,7 +130,7 @@ const HeadBox = styled.div`
   padding: 1rem;
   background: #ffecd7;
   display: flex;
-  align-items:center;
+  align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid #f1f1f1;
   p {
@@ -99,6 +139,7 @@ const HeadBox = styled.div`
     margin: 0;
   }
   button {
+    border-radius: 5px;
     margin-right: 0.5rem;
     border: none;
     padding: 0.5rem;
@@ -159,4 +200,15 @@ const SellAndLikeList = styled.div`
     border-radius: 4rem;
     background: #ffecd7;
   }
+`;
+
+const PostContainer = styled.div`
+  margin: 0 auto;
+  width: calc(100% - 6rem);
+  height: 12rem;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f1f1;
 `;
