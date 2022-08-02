@@ -10,7 +10,7 @@ import { AiOutlineHome } from "react-icons/ai";
 
 const Post = () => {
   const nickname = localStorage.getItem("nickname");
-  const postId = useParams()?.postId;
+  const postId = useParams().postId; 
   const navigate = useNavigate();
   const params = useParams();
   const [imgSrc, setImgSrc] = useState("");
@@ -27,22 +27,27 @@ const Post = () => {
   useEffect(() => {
     if (postId) {
       const setPost = async () => {
-        const postInfo = await instance.get(`/posts/${params.postId}`);
-
-        if (postInfo.nickname !== nickname) {
+        const postInfo = await instance.get(`/api/post/${postId}`);
+        // console.log(postInfo.data.post.nickname); 
+        // console.log(postInfo.nickname); 
+        // console.log(postId);
+        // console.log(nickname);
+        if (postInfo.data.post.nickname !== nickname) {
           alert("수정 권한이 없습니다.");
           navigate(-1);
           return;
         }
 
         const data = postInfo;
-        setValue("title", data.title);
-        setValue("price", data.price);
-        setValue("area", data.area);
-        setValue("state", data.state);
-        setValue("after", data.after);
-        setValue("likeCount", data.likeCount);
-        setImgSrc(data.imageUrl);
+        console.log(data)
+        setValue("title", data.data.post.title);
+        setValue("price", data.data.post.price);
+        setValue("area", data.data.post.area);
+        setValue("state", data.data.post.state);
+        setValue("after", data.data.post.after);
+        // setValue("likeCount", data.data.post.likeCount);
+        setValue("content", data.data.post.content);
+        setImgSrc(data.data.post.imageUrl);
       };
       setPost();
     }
@@ -92,12 +97,12 @@ const Post = () => {
         console.log(post);
         alert("게시글이 등록되었습니다!");
         navigate("/home");
-      } catch (error) {
+      } catch (error) { 
         console.log(error);
       }
     } else {
-      try {
-        const update = await instance.put(`/api/post/${postId}`, newPost);
+      try { 
+        const update = instance.put(`/api/post/${postId}`, newPost);
         console.log(update);
         alert("게시글이 수정되었습니다!");
         navigate(`/post/${postId}`);
@@ -133,7 +138,6 @@ const Post = () => {
             type="file"
             accept="image/*"
             {...register("postImg", {
-              required: true,
               onChange: (e) => previewImage(e),
             })}
           />
@@ -188,9 +192,8 @@ const Post = () => {
         </Col>
         <Col>
           <label>가격</label>
-          <input
-            type="text"
-            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+          <input 
+            type="number" 
             placeholder="가격을 입력해 주세요."
             {...register("price", {
               required: true,
@@ -221,11 +224,14 @@ const Post = () => {
 export default Post;
 
 const MainDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 40rem;
-  margin: 0 auto;
+  max-height: 75rem;
+  margin: 0rem auto;
   justify-content: center;
   background-color: #ffecd7;
-  flex-direction: column;
 `;
 
 const HomeBtn = styled.button`
@@ -243,7 +249,8 @@ const PostForm = styled.form`
     margin: 1rem auto 1rem;
   }
   input {
-    width: 6rem;
+    margin-left: 1rem;
+    width: 10rem;
   }
   button {
     margin: 4rem 0 1.2rem;
@@ -252,17 +259,39 @@ const PostForm = styled.form`
     background-color: #e78111;
     color: white;
     border-radius: 0.5rem;
-    border: 0;
   }
 `;
 
 const Col = styled.div`
-  width: 40rem;
-  height: 10vh;
+  display: block;
+  width: 35rem;
+  height: 3rem;
   margin: 0 auto;
   justify-content: center;
-  background-color: #e78111;
-  margin-bottom: 3rem;
+  background-color: #ffecd7;
+  margin-bottom: 0 auto 2rem;
+  border: 0.5rem;
+  gap: 0 3rem;
+  textarea {
+    width: 100%;
+    margin: 0.2rem 0;
+    padding: 0.5rem;
+    border: 0.2rem solid #ccc;
+    border-radius: 0.3rem;
+    font-size: 1rem;
+    &:focus {
+      border: 0.1rem solid #222;
+      background: #fafafa;
+    }
+  }
+  select {
+    cursor: pointer;
+    margin-left: 1rem;
+    option {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+  }
 `;
 
 const ImageLabel = styled.label`
