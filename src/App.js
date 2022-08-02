@@ -24,6 +24,7 @@ function App() {
         <Route path="/post" element={<Post />} />
         <Route path="/post/:postId" element={<PostDetail />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/post/:postId/edit" element={<Post />} />
       </Routes>
     </div>
   );
