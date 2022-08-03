@@ -6,12 +6,17 @@ import { useSelector } from "react-redux";
 import { AiOutlineHeart } from "react-icons/ai";
 
 const PostBox = ({ data }) => {
+  const regex = /(http(s))?:\/\/([a-z0-9-]+\.)+[a-z0-9]{2,4}.*$/;
   const postArea = useSelector((state) => state.area);
   return (
     <>
       <PostInfoBox>
         <ImageBox>
-          <img src={data.imageUrl} alt="postimage" />
+          {data.imageUrl && regex.test(data.imageUrl) ? (
+            <img src={data.imageUrl} alt="postimage" />
+          ) : (
+            <img src="/image/logo.png" alt="postimage" />
+          )}
         </ImageBox>
         <PostInfo>
           <h2>{data.title}</h2>
