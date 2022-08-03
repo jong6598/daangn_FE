@@ -35,7 +35,7 @@ const ChatRoom = () => {
   let sock = new SockJS("http://43.200.6.110/socket");
   let client = StompJS.over(sock);
 
-  //   const client = new StompJS.Client({
+//   const client = new StompJS.Client({
   //     brokerURL: "ws://43.200.6.110/socket",
   //     connectHeaders: {
   //       Authorization: token,
