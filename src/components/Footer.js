@@ -8,7 +8,7 @@ const Footer = ({ theme }) => {
   return (
     <FooterComponent theme={theme}>
       <ChatBox>
-        <Link to="/chat">
+        <Link to="/mychatroom">
           {theme === "chat" ? <BsChatFill /> : <BsChat />}
           <p>채팅</p>
         </Link>
