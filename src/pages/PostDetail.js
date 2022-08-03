@@ -6,6 +6,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AiOutlineHome } from "react-icons/ai";
 import Footer from "../components/Footer";
 import { FaCarrot } from "react-icons/fa";
+import { BiChat } from "react-icons/bi";
+import { Link } from "react-router-dom";
 
 const PostDetail = () => {
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ const PostDetail = () => {
 
   useEffect(() => {
     queryClient.invalidateQueries("post");
-  }, [liked])
+  }, [liked]);
 
   const getPost = async () => {
     const res = await instance.get(`/api/post/${params.postId}`);
@@ -32,27 +34,25 @@ const PostDetail = () => {
   console.log(postInfo);
 
   const toggleLike = async () => {
-    if (postInfo.isLiked===false) {
-      try{
-        await instance.post(`/api/like/${params.postId}`)
-        console.log(postInfo.isLiked) 
-        setLiked(true)
-      } catch(err){
+    if (postInfo.isLiked === false) {
+      try {
+        await instance.post(`/api/like/${params.postId}`);
+        console.log(postInfo.isLiked);
+        setLiked(true);
+      } catch (err) {
         console.log(err);
       }
-    } else if 
-    (postInfo.isLiked===true){
+    } else if (postInfo.isLiked === true) {
       try {
-        await instance.delete(`/api/like/${params.postId}`)
-        console.log(postInfo.isLiked)
-        setLiked(false)
-      } catch(err){
+        await instance.delete(`/api/like/${params.postId}`);
+        console.log(postInfo.isLiked);
+        setLiked(false);
+      } catch (err) {
         console.log(err);
         alert(err);
       }
     }
-  }
-
+  };
 
   const contentDeleteBtn = async () => {
     const result = window.confirm("게시글을 삭제하시겠습니까?");
@@ -79,28 +79,47 @@ const PostDetail = () => {
       </HomeBtn>
       {postInfo.nickname === nickname ? (
         <Btnbox>
-          <Ubtn onClick={() => navigate(`/post/${params.postId}/edit`)}>수정</Ubtn>
+          <Ubtn onClick={() => navigate(`/post/${params.postId}/edit`)}>
+            수정
+          </Ubtn>
           <Dbtn onClick={contentDeleteBtn}>삭제</Dbtn>
         </Btnbox>
       ) : null}
       <img src={postInfo.imageUrl} alt="" />
       <ProfileBox>
-      <FaCarrot />
+        <FaCarrot />
         <NicknameBox>
           <span>작성자:{postInfo.nickname}</span>
           <span>위치:{postInfo.area}</span>
-          </NicknameBox>
-          <HeartBtn onClick={toggleLike}> {postInfo.isLiked===true?(<img src="/image/heart.png" alt="heartlogo"/>):(<img src="/image/emptyheart.png" alt="emptyheartlogo"/>)} </HeartBtn>
+        </NicknameBox>
+        <HeartBtn onClick={toggleLike}>
+          {" "}
+          {postInfo.isLiked === true ? (
+            <img src="/image/heart.png" alt="heartlogo" />
+          ) : (
+            <img src="/image/emptyheart.png" alt="emptyheartlogo" />
+          )}{" "}
+        </HeartBtn>
       </ProfileBox>
       <Postbox>
         <span>{postInfo.title}</span>
         <Category>
-        <span>카테고리: {postInfo.category} /</span>
-        <span>작성시간: {postInfo.after}</span>
+          <span>카테고리: {postInfo.category} /</span>
+          <span>작성시간: {postInfo.after}</span>
         </Category>
         <span>가격: {postInfo.price}</span>
         <span>내용: {postInfo.content}</span>
       </Postbox>
+      {postInfo.nickname !== nickname ? (
+        <>
+          <Link to={`/chatroom/${params.postId}`}>
+            <ChatBtn>
+              <BiChat />
+              <p>작성자와 대화하기</p>
+            </ChatBtn>
+          </Link>
+        </>
+      ) : null}
       <Footer />
     </MainDiv>
   );
@@ -132,7 +151,7 @@ const HomeBtn = styled.button`
   margin-top: 1rem;
   background-color: transparent;
   border: 0;
-  color:#e78111;
+  color: #e78111;
 `;
 
 const Btnbox = styled.div`
@@ -140,8 +159,7 @@ const Btnbox = styled.div`
   display: flex;
   padding-left: 27rem;
   flex-direction: row;
-  `
-
+`;
 
 const Ubtn = styled.button`
   display: flex;
@@ -164,7 +182,6 @@ const Dbtn = styled.button`
   border-width: 0.2rem;
   color: white;
 `;
-
 
 const ProfileBox = styled.div`
   width: calc(100% - 6rem);
@@ -205,7 +222,7 @@ const Postbox = styled.div`
   margin: 1.3rem auto 0;
   max-width: 30rem;
   text-align: left;
-  span{
+  span {
     margin: 0.7rem;
     font-size: 1.2rem;
     font-weight: 350;
@@ -213,12 +230,12 @@ const Postbox = styled.div`
 `;
 
 const HeartBtn = styled.button`
-  max-width:3rem;
+  max-width: 3rem;
   margin-left: 8rem;
   border: 0;
   background-color: transparent;
   max-height: 6rem;
-`
+`;
 
 const Category = styled.div`
   display: flex;
@@ -230,4 +247,19 @@ const Category = styled.div`
     font-weight: 500;
     padding-left: 0.5rem;
   }
-`
+`;
+const ChatBtn = styled.div`
+  cursor: pointer;
+  position: fixed;
+  bottom: 20%;
+  right: 30%;
+  border-radius: 5rem;
+  svg {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 5rem;
+    font-size: 4rem;
+    color: #e78111;
+    background: #fffbf7;
+  }
+`;
