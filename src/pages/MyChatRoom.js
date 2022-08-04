@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 
 const MyChatRoom = () => {
   const queryClient = useQueryClient();
+  const regex = /(http(s))?:\/\/([a-z0-9-]+\.)+[a-z0-9]{2,4}.*$/;
+
   const getChatRoom = async () => {
     const res = await instance.get("/api/myrooms");
     return res.data;
@@ -24,9 +26,7 @@ const MyChatRoom = () => {
     await instance.delete(`/api/room/${roomId}`);
     queryClient.invalidateQueries('chatRoomList');
   }
-
-  console.log(roomInfo.data);
-
+  
   return (
     <MainDiv>
       <HeaderBox>
@@ -54,7 +54,11 @@ const MyChatRoom = () => {
                 <DeleteBtn onClick={() => {chatDelete(`${data.id}`)}}>삭제</DeleteBtn>
               </ProfileAndUserInfoBox>
               <ImageBox>
-                <img src="/image/logo.png" alt="productimage" />
+                {data.imageUrl && regex.test(data.imageUrl) ? (
+                  <img src={data.imageUrl} alt="postimage" />
+                    ) : (
+                  <img src="/image/logo.png" alt="postimage" />
+                  )}
               </ImageBox>
             </ChatBox>
           </React.Fragment>
@@ -72,6 +76,7 @@ const MainDiv = styled.div`
   margin: 0 auto;
   justify-content: center;
   overflow-y: auto;
+  background: #fffbf7;
 `;
 
 const HeaderBox = styled.div`
@@ -135,11 +140,12 @@ const DeleteBtn = styled.div`
 `;
 
 const ImageBox = styled.div`
-  width: 11rem;
-  height: 8rem;
+  width: 9rem;
+  height: 6rem;
   position: relative;
   background: #ffecd7;
-  img {
+  margin: 1rem 1rem 0 0;
+  img { 
     position: absolute;
     max-width: 100%;
     max-height: 100%;
