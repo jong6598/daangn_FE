@@ -9,9 +9,8 @@ import Login from "./pages/Login";
 import Mypage from "./pages/Mypage";
 import Post from "./pages/Post";
 import PostDetail from "./pages/PostDetail";
-import Postchat from "./pages/Postchat";
-import ChatRoom from "./pages/ChatRoom";
 import MyChatRoom from "./pages/MyChatRoom";
+import Chat from "./pages/Chat";
 
 function App() {
   return (
@@ -27,8 +26,7 @@ function App() {
         <Route path="/post/:postId" element={<PostDetail />} />
         <Route path="/mychatroom" element={<MyChatRoom />} />
         <Route path="/post/:postId/edit" element={<Post />} />
-        {/* <Route path="/postchat/:postId" element={<Postchat />} /> */}
-        <Route path="/chatroom/:postId" element={<ChatRoom />} />
+        <Route path="/chat/:roomId" element={<Chat />} /> 
       </Routes>
     </div>
   );
