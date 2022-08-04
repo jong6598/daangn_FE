@@ -58,12 +58,12 @@ const Home = () => {
 
   useEffect(() => {
     refetch();
-  }, [search]);
+  }, [search, data]);
 
   useEffect(() => {
     refetch();
     setSearch(null);
-  }, [areaSelected, categorySelected])
+  }, [areaSelected, categorySelected]);
 
   const handleArea = () => {
     setAreaSelected(area_ref.current.value);
@@ -75,7 +75,7 @@ const Home = () => {
 
   const onClicksearch = () => {
     setSearch(search_ref.current.value);
-    search_ref.current.value = '';
+    search_ref.current.value = "";
   };
   return (
     <>
@@ -142,11 +142,11 @@ const Home = () => {
             );
           })}
         {isFetchingNextPage ? <Spinner /> : <div ref={ref} />}
-        <Link to="/post">
-          <PostBtn>
+        <PostBtn>
+          <Link to="/post">
             <FiPlusCircle />
-          </PostBtn>
-        </Link>
+          </Link>
+        </PostBtn>
         <Footer />
       </MainDiv>
     </>
@@ -250,9 +250,9 @@ const PostContainer = styled.div`
 
 const PostBtn = styled.div`
   cursor: pointer;
-  position: fixed;
-  bottom: 20%;
-  right: 30%;
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
   border-radius: 5rem;
   svg {
     width: 6rem;
@@ -263,4 +263,3 @@ const PostBtn = styled.div`
     background: #fffbf7;
   }
 `;
-
