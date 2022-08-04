@@ -250,9 +250,10 @@ const PostContainer = styled.div`
 
 const PostBtn = styled.div`
   cursor: pointer;
-  position: absolute;
-  bottom: 5%;
-  right: 5%;
+   position: fixed;
+  bottom: 20%;
+  right: 30%;
+  margin-right: 10rem;
   border-radius: 5rem;
   svg {
     width: 6rem;

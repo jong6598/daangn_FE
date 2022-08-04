@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import instance from "../axiosConfig";
 import styled from "styled-components";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,16 +13,14 @@ import { Link } from "react-router-dom";
 const PostDetail = () => {
   const navigate = useNavigate();
   const params = useParams();
+  const postArea = useSelector((state) => state.area);
+  const postCategory = useSelector((state) => state.category);
   const storetoken = localStorage.getItem("TOKEN");
   const nickname = localStorage.getItem("nickname");
   const [liked, setLiked] = useState();
   const queryClient = useQueryClient();
 
   const postId = { postId: params.postId };
-
-  useEffect(() => {
-    queryClient.invalidateQueries("post");
-  }, [liked]);
 
   const getPost = async () => {
     const res = await instance.get(`/api/post/${params.postId}`);
@@ -89,52 +88,64 @@ const PostDetail = () => {
     }
   };
 
+  useEffect(() => {
+    queryClient.invalidateQueries("post");
+  }, [postInfo, liked]);
+
   return (
     <MainDiv>
-      <HomeBtn onClick={() => navigate("/home")}>
-        <AiOutlineHome />
-      </HomeBtn>
-      {postInfo.nickname === nickname ? (
-        <Btnbox>
-          <Ubtn onClick={() => navigate(`/post/${params.postId}/edit`)}>
-            수정
-          </Ubtn>
-          <Dbtn onClick={contentDeleteBtn}>삭제</Dbtn>
-        </Btnbox>
-      ) : null}
-      <img src={postInfo.imageUrl} alt="" />
-      <ProfileBox>
-        <FaCarrot />
-        <NicknameBox>
-          <span>작성자:{postInfo.nickname}</span>
-          <span>위치:{postInfo.area}</span>
-        </NicknameBox>
-        <HeartBtn onClick={toggleLike}>
-          {" "}
-          {postInfo.isLiked === true ? (
-            <img src="/image/heart.png" alt="heartlogo" />
-          ) : (
-            <img src="/image/emptyheart.png" alt="emptyheartlogo" />
-          )}{" "}
-        </HeartBtn>
-      </ProfileBox>
-      <Postbox>
-        <span>{postInfo.title}</span>
-        <Category>
-          <span>카테고리: {postInfo.category} /</span>
-          <span>작성시간: {postInfo.after}</span>
-        </Category>
-        <span>가격: {postInfo.price}</span>
-        <span>내용: {postInfo.content}</span>
-      </Postbox>
-      {postInfo.nickname !== nickname ? (
+      <HeaderBox>
+        <HomeBtn onClick={() => navigate("/home")}>
+          <AiOutlineHome />
+        </HomeBtn>
+        {postInfo.nickname !== nickname ? (
         <>
-          <ChatBtn onClick={() => {chatStart()}}>
+          <ChatBtn
+            onClick={() => {
+              chatStart();
+            }}
+          >
             <BiChat />
             <p>작성자와 대화하기</p>
           </ChatBtn>
-        </> 
+        </>
       ) : null}
+      </HeaderBox>
+      <InfoBox>
+        {postInfo.nickname === nickname ? (
+          <Btnbox>
+            <Ubtn onClick={() => navigate(`/post/${params.postId}/edit`)}>
+              수정
+            </Ubtn>
+            <Dbtn onClick={contentDeleteBtn}>삭제</Dbtn>
+          </Btnbox>
+        ) : null}
+        <img src={postInfo.imageUrl} alt="" />
+        <ProfileBox>
+          <FaCarrot />
+          <NicknameBox>
+            <span>작성자:{postInfo.nickname}</span>
+            <span>위치:{postArea[postInfo.area]}</span>
+          </NicknameBox>
+          <HeartBtn onClick={toggleLike}>
+            {" "}
+            {postInfo.isLiked === true ? (
+              <img src="/image/heart.png" alt="heartlogo" />
+            ) : (
+              <img src="/image/emptyheart.png" alt="emptyheartlogo" />
+            )}{" "}
+          </HeartBtn>
+        </ProfileBox>
+        <Postbox>
+          <span>{postInfo.title}</span>
+          <Category>
+            <span>카테고리: {postCategory[postInfo.category]} /</span>
+            <span>작성시간: {postInfo.after}</span>
+          </Category>
+          <span>가격: {postInfo.price}</span>
+          <span>내용: {postInfo.content}</span>
+        </Postbox>
+      </InfoBox>
       <Footer />
     </MainDiv>
   );
@@ -145,25 +156,41 @@ export default PostDetail;
 const MainDiv = styled.div`
   position: relative;
   width: 40rem;
-  height: 100vh;
+  height: calc(100vh - 13rem);
   margin: 0 auto 7rem;
   justify-content: center;
   background: #fffbf7;
   /* background: #333; */
   img {
     display: block;
-    margin: 1.3rem auto 0;
+    margin: 0rem auto 0;
     width: 100%;
     max-width: 25rem;
   }
 `;
 
+const HeaderBox = styled.div`
+  width: 40rem;
+  height: 6rem;
+  display: flex;
+  position: fixed;
+  background: #ffecd7;
+  justify-content: space-between;
+`;
+
+const InfoBox = styled.div`
+  overflow-y: auto;
+  padding-bottom: 8rem;
+  padding-top: 6.5rem;
+
+`;
+
 const HomeBtn = styled.button`
   font-size: 3rem;
-  margin-left: 5rem;
+  margin-left: 2rem;
   display: flex;
   text-align: left;
-  margin-top: 1rem;
+  margin-top: 1.3rem;
   background-color: transparent;
   border: 0;
   color: #e78111;
@@ -265,20 +292,23 @@ const Category = styled.div`
 `;
 const ChatBtn = styled.div`
   cursor: pointer;
-  position: fixed;
-  bottom: 20%;
-  right: 30%;
   border-radius: 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2rem;
   svg {
-    width: 6rem;
-    height: 6rem;
+    width: 3rem;
+    height: 3rem;
     border-radius: 5rem;
     font-size: 4rem;
     color: #e78111;
-    background: #fffbf7;
+  }
+  p {
+    color: #e78111;
   }
 `;
-
 
 const TestDiv = styled.div`
   width: 10rem;
