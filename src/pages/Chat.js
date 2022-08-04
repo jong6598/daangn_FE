@@ -57,7 +57,7 @@ const Chat = () => {
     refetchOnWindowFocus: false,
   });
 
-  const handleEnter = (nickname, message) => {
+  const sendMsg = (nickname, message) => {
     client.send(
       `/pub/message/${roomId}`,
       {},
@@ -76,12 +76,18 @@ const Chat = () => {
     scrollToBottom();
   }, [number, contents]);
 
+
+  const onKeyPress = (e) => {
+     if(e.key === 'Enter') {
+      sendMsg(myNickname, message);
+    } 
+  }
+  
+
   return (
     <MainDiv>
       <HeaderBox>
-        <button onClick={() => navigate(-1)}>
           <BsBackspace onClick={() => {disConnect()}} />
-        </button>
         <span>채팅방</span>
       </HeaderBox>
       <ChatBox ref={scrollref}>
@@ -108,9 +114,10 @@ const Chat = () => {
           value={message}
           autoComplete="off"
           placeholder=" 여기에 메세지를 입력하세요"
+          onKeyPress={onKeyPress}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button onClick={() => handleEnter(myNickname, message)}>
+        <button onClick={() => sendMsg(myNickname, message)}>
           <AiOutlineSend />
         </button>
       </SendBox>
@@ -132,22 +139,20 @@ const MainDiv = styled.div`
 `;
 
 const HeaderBox = styled.div`
-  height: 15%;
+  height: 10%;
   display: flex;
   font-size: 2rem;
+  align-items: center;
   border-bottom: black;
   border-bottom: 2px solid #e78111;
   color: #e78111;
-  button {
-    background-color: transparent;
-    border: 0;
-    font-size: 2rem;
-    margin-left: 1rem;
-    color: #e78111;
+  svg { 
+    cursor: pointer;
+    margin-left: 2.5rem;
   }
   span {
     margin: 2rem;
-    padding-left: 12rem;
+    padding-left: 11rem;
   }
 `;
 
@@ -157,7 +162,7 @@ const ChatBox = styled.div`
   margin-left: 1rem;
   max-width: 38rem;
   font-size: 1rem;
-  height: 70%;
+  height: 80%;
   overflow-y: auto;
   .myMsg {
     text-align: right;
@@ -173,7 +178,7 @@ const ChatBox = styled.div`
     display: inline-block;
     border-radius: 1rem;
     padding: 0.5rem 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     margin-top: 0.3rem;
   }
   .anotherMsg > .msg {
@@ -191,7 +196,7 @@ const ChatBox = styled.div`
 `;
 
 const SendBox = styled.div`
-  height: 15%;
+  height: 10%;
   display: flex;
   width: 40rem;
   left: 0;
@@ -201,11 +206,12 @@ const SendBox = styled.div`
   bottom: 0;
   position: absolute;
   input {
+    padding:2rem;
     margin: 1rem;
-    width: 35rem;
+    width: 33rem;
     border-radius: 1rem;
     border: 2px solid #e78111;
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
   button {
     width: 5rem;
