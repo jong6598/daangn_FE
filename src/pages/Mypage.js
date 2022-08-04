@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import styled from "styled-components";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 // TODO: intersection-observer 사용해보기
