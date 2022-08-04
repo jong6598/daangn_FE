@@ -17,6 +17,8 @@ const PostDetail = () => {
   const [liked, setLiked] = useState();
   const queryClient = useQueryClient();
 
+  const postId = { postId: params.postId };
+
   useEffect(() => {
     queryClient.invalidateQueries("post");
   }, [liked]);
@@ -72,6 +74,21 @@ const PostDetail = () => {
     }
   };
 
+  const chatStart = async () => {
+    try {
+      const res = await instance.post("/api/room", postId);
+      const roomId = res.data.roomId;
+      alert("새로 만든 채팅방으로 이동합니다.");
+      return navigate(`/chat/${roomId}`);
+    } catch (err) {
+      if (err.response.data.message === "방이 이미 존재합니다") {
+        const roomId = err.response.data.roomId;
+        alert("기존에 있던 채팅방으로 이동합니다.");
+        return navigate(`/chat/${roomId}`);
+      }
+    }
+  };
+
   return (
     <MainDiv>
       <HomeBtn onClick={() => navigate("/home")}>
@@ -112,13 +129,11 @@ const PostDetail = () => {
       </Postbox>
       {postInfo.nickname !== nickname ? (
         <>
-          <Link to={`/chatroom/${params.postId}`}>
-            <ChatBtn>
-              <BiChat />
-              <p>작성자와 대화하기</p>
-            </ChatBtn>
-          </Link>
-        </>
+          <ChatBtn onClick={() => {chatStart()}}>
+            <BiChat />
+            <p>작성자와 대화하기</p>
+          </ChatBtn>
+        </> 
       ) : null}
       <Footer />
     </MainDiv>
@@ -262,4 +277,12 @@ const ChatBtn = styled.div`
     color: #e78111;
     background: #fffbf7;
   }
+`;
+
+
+const TestDiv = styled.div`
+  width: 10rem;
+  height: 3rem;
+  background: #333;
+  color: white;
 `;
