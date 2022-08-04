@@ -15,6 +15,7 @@ const Post = () => {
   const params = useParams();
   const [imgSrc, setImgSrc] = useState("");
 
+
   const {
     register,
     handleSubmit,
@@ -228,7 +229,6 @@ const MainDiv = styled.div`
   flex-direction: column;
   align-items: center;
   width: 40rem;
-  max-height: 75rem;
   margin: 0rem auto;
   justify-content: center;
   background-color: #ffecd7;
@@ -243,6 +243,7 @@ const HomeBtn = styled.button`
 `;
 
 const PostForm = styled.form`
+  height: 122vh;
   h2 {
     display: inline-block;
     border-bottom: 0.3rem solid #e78111;

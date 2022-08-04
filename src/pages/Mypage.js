@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-// TODO:intersection-observer 사용해보기
+// TODO: intersection-observer 사용해보기
 import { useInView } from "react-intersection-observer";
 import { FaCarrot } from "react-icons/fa";
 import { IoIosPaper } from "react-icons/io";
